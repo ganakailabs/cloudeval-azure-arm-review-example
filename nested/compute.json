@@ -32,9 +32,9 @@
         "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
       ],
       "sku": {
-        "name": "Standard_B2ms",
+        "name": "Standard_B1ms",
         "tier": "Standard",
-        "capacity": 2
+        "capacity": 1
       },
       "identity": {
         "type": "UserAssigned",
@@ -78,7 +78,7 @@
             "osDisk": {
               "createOption": "FromImage",
               "managedDisk": {
-                "storageAccountType": "Premium_LRS"
+                "storageAccountType": "StandardSSD_LRS"
               }
             }
           },
