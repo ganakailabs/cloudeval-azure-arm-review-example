@@ -1,0 +1,140 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "workloadName": {
+      "type": "string",
+      "defaultValue": "cloudeval-review"
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "dev"
+    },
+    "allowedSshCidr": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/24"
+    },
+    "adminUsername": {
+      "type": "string",
+      "defaultValue": "azureuser"
+    },
+    "adminPublicKey": {
+      "type": "string",
+      "metadata": {
+        "description": "Public SSH key used by the VM scale set. Use a real public key before deployment."
+      }
+    }
+  },
+  "variables": {
+    "commonTags": {
+      "application": "cloudeval-public-example",
+      "environment": "[parameters('environment')]",
+      "managedBy": "arm-template",
+      "reviewedBy": "cloudeval"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "network",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "nested/network.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": { "value": "[parameters('location')]" },
+          "workloadName": { "value": "[parameters('workloadName')]" },
+          "allowedSshCidr": { "value": "[parameters('allowedSshCidr')]" },
+          "commonTags": { "value": "[variables('commonTags')]" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "storage",
+      "dependsOn": [ "network" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "nested/storage.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": { "value": "[parameters('location')]" },
+          "workloadName": { "value": "[parameters('workloadName')]" },
+          "commonTags": { "value": "[variables('commonTags')]" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "keyvault",
+      "dependsOn": [ "network" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "nested/keyvault.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": { "value": "[parameters('location')]" },
+          "workloadName": { "value": "[parameters('workloadName')]" },
+          "commonTags": { "value": "[variables('commonTags')]" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "monitoring",
+      "dependsOn": [ "storage" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "nested/monitoring.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": { "value": "[parameters('location')]" },
+          "workloadName": { "value": "[parameters('workloadName')]" },
+          "commonTags": { "value": "[variables('commonTags')]" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "compute",
+      "dependsOn": [ "network", "storage", "keyvault", "monitoring" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "nested/compute.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": { "value": "[parameters('location')]" },
+          "workloadName": { "value": "[parameters('workloadName')]" },
+          "adminUsername": { "value": "[parameters('adminUsername')]" },
+          "adminPublicKey": { "value": "[parameters('adminPublicKey')]" },
+          "commonTags": { "value": "[variables('commonTags')]" }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "reviewedStack": {
+      "type": "string",
+      "value": "[parameters('workloadName')]"
+    }
+  }
+}

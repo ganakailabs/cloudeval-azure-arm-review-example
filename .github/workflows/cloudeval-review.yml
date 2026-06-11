@@ -1,0 +1,31 @@
+name: CloudEval infrastructure review
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run CloudEval review
+        uses: ganakailabs/cloudeval-action@v1
+        with:
+          access_key: ${{ secrets.CLOUDEVAL_ACCESS_KEY }}
+          project_id: ${{ secrets.CLOUDEVAL_PROJECT_ID }}
+          mode: review
+          repo: ${{ github.repository }}
+          ref: ${{ github.head_ref || github.ref_name }}
+          commit_sha: ${{ github.event.pull_request.head.sha || github.sha }}
+          ai_summary: "true"
+          post_pr_comment: "true"
+          upload_artifacts: "true"
+          include_run_metadata: "true"

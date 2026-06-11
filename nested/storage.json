@@ -1,0 +1,86 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": { "type": "string" },
+    "workloadName": { "type": "string" },
+    "commonTags": { "type": "object" }
+  },
+  "variables": {
+    "suffix": "[uniqueString(resourceGroup().id, parameters('workloadName'))]",
+    "storageName": "[toLower(concat('ce', take(replace(parameters('workloadName'), '-', ''), 12), variables('suffix')))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2023-05-01",
+      "name": "[variables('storageName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('commonTags')]",
+      "sku": {
+        "name": "Standard_GRS"
+      },
+      "kind": "StorageV2",
+      "properties": {
+        "accessTier": "Hot",
+        "allowBlobPublicAccess": false,
+        "allowSharedKeyAccess": false,
+        "minimumTlsVersion": "TLS1_2",
+        "supportsHttpsTrafficOnly": true,
+        "networkAcls": {
+          "defaultAction": "Deny",
+          "bypass": "AzureServices"
+        },
+        "encryption": {
+          "services": {
+            "blob": { "enabled": true },
+            "file": { "enabled": true }
+          },
+          "keySource": "Microsoft.Storage"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2023-05-01",
+      "name": "[concat(variables('storageName'), '/default/app-artifacts')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
+      ],
+      "properties": {
+        "publicAccess": "None"
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/managementPolicies",
+      "apiVersion": "2023-05-01",
+      "name": "[concat(variables('storageName'), '/default')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
+      ],
+      "properties": {
+        "policy": {
+          "rules": [
+            {
+              "enabled": true,
+              "name": "MoveOldLogsToCool",
+              "type": "Lifecycle",
+              "definition": {
+                "filters": {
+                  "blobTypes": [ "blockBlob" ],
+                  "prefixMatch": [ "app-artifacts/logs/" ]
+                },
+                "actions": {
+                  "baseBlob": {
+                    "tierToCool": { "daysAfterModificationGreaterThan": 30 },
+                    "delete": { "daysAfterModificationGreaterThan": 180 }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

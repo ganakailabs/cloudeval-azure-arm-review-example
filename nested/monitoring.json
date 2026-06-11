@@ -1,0 +1,62 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": { "type": "string" },
+    "workloadName": { "type": "string" },
+    "commonTags": { "type": "object" }
+  },
+  "variables": {
+    "workspaceName": "[concat(parameters('workloadName'), '-law')]",
+    "appInsightsName": "[concat(parameters('workloadName'), '-appi')]",
+    "actionGroupName": "[concat(parameters('workloadName'), '-ops-ag')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "apiVersion": "2023-09-01",
+      "name": "[variables('workspaceName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('commonTags')]",
+      "properties": {
+        "sku": {
+          "name": "PerGB2018"
+        },
+        "retentionInDays": 30,
+        "features": {
+          "enableLogAccessUsingOnlyResourcePermissions": true
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2020-02-02",
+      "name": "[variables('appInsightsName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('commonTags')]",
+      "kind": "web",
+      "dependsOn": [
+        "[resourceId('Microsoft.OperationalInsights/workspaces', variables('workspaceName'))]"
+      ],
+      "properties": {
+        "Application_Type": "web",
+        "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('workspaceName'))]",
+        "IngestionMode": "LogAnalytics",
+        "publicNetworkAccessForIngestion": "Enabled",
+        "publicNetworkAccessForQuery": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.Insights/actionGroups",
+      "apiVersion": "2023-01-01",
+      "name": "[variables('actionGroupName')]",
+      "location": "Global",
+      "tags": "[parameters('commonTags')]",
+      "properties": {
+        "groupShortName": "ceops",
+        "enabled": true,
+        "emailReceivers": []
+      }
+    }
+  ]
+}

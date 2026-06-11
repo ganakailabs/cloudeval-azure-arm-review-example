@@ -1,0 +1,41 @@
+# CloudEval project configuration for this repository.
+# Keep this file in source control so CloudEval and CI use the same entry point and gates.
+
+version: 1
+
+stacks:
+  - id: production-reference
+    name: Production reference architecture
+    entry: azuredeploy.json
+    parameters: azuredeploy.parameters.json
+
+resolve:
+  linked_templates: true
+
+reports:
+  default_profile: standard
+
+ci:
+  gates:
+    # required: fail the CI review when a configured gate fails.
+    # warn: report failures in the PR comment but do not fail CI.
+    enforcement: required
+
+    # Overall Well-Architected posture. CloudEval scores range from 0 to 100.
+    overall_score_min: 60
+
+    # Optional per-pillar minimums. Omitted pillars use pillar_score_min.
+    pillar_score_min: 50
+    pillar_score_mins:
+      security: 70
+      reliability: 60
+      cost_optimization: 50
+      operational_excellence: 50
+      performance_efficiency: 50
+
+    # Fail when high-risk architecture findings or validation failures are present.
+    fail_on_high_risk: true
+    fail_on_validation_errors: true
+
+    # Monthly budget gate for the estimated architecture cost.
+    max_monthly_cost: 500

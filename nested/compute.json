@@ -1,0 +1,120 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": { "type": "string" },
+    "workloadName": { "type": "string" },
+    "adminUsername": { "type": "string" },
+    "adminPublicKey": { "type": "string" },
+    "commonTags": { "type": "object" }
+  },
+  "variables": {
+    "vmssName": "[concat(parameters('workloadName'), '-vmss')]",
+    "identityName": "[concat(parameters('workloadName'), '-mi')]",
+    "vnetName": "[concat(parameters('workloadName'), '-vnet')]",
+    "backendPoolName": "app-backend-pool"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[variables('identityName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('commonTags')]"
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachineScaleSets",
+      "apiVersion": "2024-03-01",
+      "name": "[variables('vmssName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('commonTags')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
+      ],
+      "sku": {
+        "name": "Standard_B2ms",
+        "tier": "Standard",
+        "capacity": 2
+      },
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]": {}
+        }
+      },
+      "properties": {
+        "overprovision": false,
+        "upgradePolicy": {
+          "mode": "Rolling",
+          "rollingUpgradePolicy": {
+            "maxBatchInstancePercent": 50,
+            "maxUnhealthyInstancePercent": 20,
+            "pauseTimeBetweenBatches": "PT0S"
+          }
+        },
+        "virtualMachineProfile": {
+          "osProfile": {
+            "computerNamePrefix": "ceapp",
+            "adminUsername": "[parameters('adminUsername')]",
+            "linuxConfiguration": {
+              "disablePasswordAuthentication": true,
+              "ssh": {
+                "publicKeys": [
+                  {
+                    "path": "[format('/home/{0}/.ssh/authorized_keys', parameters('adminUsername'))]",
+                    "keyData": "[parameters('adminPublicKey')]"
+                  }
+                ]
+              }
+            }
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "Canonical",
+              "offer": "0001-com-ubuntu-server-jammy",
+              "sku": "22_04-lts-gen2",
+              "version": "latest"
+            },
+            "osDisk": {
+              "createOption": "FromImage",
+              "managedDisk": {
+                "storageAccountType": "Premium_LRS"
+              }
+            }
+          },
+          "networkProfile": {
+            "networkInterfaceConfigurations": [
+              {
+                "name": "app-nic",
+                "properties": {
+                  "primary": true,
+                  "enableAcceleratedNetworking": false,
+                  "ipConfigurations": [
+                    {
+                      "name": "app-ipconfig",
+                      "properties": {
+                        "subnet": {
+                          "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), 'app')]"
+                        },
+                        "applicationGatewayBackendAddressPools": [
+                          {
+                            "id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools', concat(parameters('workloadName'), '-appgw'), variables('backendPoolName'))]"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "diagnosticsProfile": {
+            "bootDiagnostics": {
+              "enabled": true
+            }
+          }
+        }
+      }
+    }
+  ]
+}

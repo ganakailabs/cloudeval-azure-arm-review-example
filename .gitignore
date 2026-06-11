@@ -1,0 +1,9 @@
+.DS_Store
+.env
+.env.*
+node_modules/
+.terraform/
+*.tfstate
+*.tfstate.*
+cloudeval-review/
+cloudeval-reports/
