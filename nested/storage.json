@@ -23,12 +23,12 @@
       "kind": "StorageV2",
       "properties": {
         "accessTier": "Hot",
-        "allowBlobPublicAccess": false,
-        "allowSharedKeyAccess": false,
-        "minimumTlsVersion": "TLS1_2",
+        "allowBlobPublicAccess": true,
+        "allowSharedKeyAccess": true,
+        "minimumTlsVersion": "TLS1_0",
         "supportsHttpsTrafficOnly": true,
         "networkAcls": {
-          "defaultAction": "Deny",
+          "defaultAction": "Allow",
           "bypass": "AzureServices"
         },
         "encryption": {
@@ -48,7 +48,7 @@
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
       ],
       "properties": {
-        "publicAccess": "None"
+        "publicAccess": "Blob"
       }
     },
     {
