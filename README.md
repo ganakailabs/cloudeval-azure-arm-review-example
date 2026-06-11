@@ -45,15 +45,17 @@ CLOUDEVAL_PROJECT_ID
 
 The access key should be scoped to the CloudEval project and include project/report review permissions. If the project is linked to the CloudEval GitHub App and the key can comment through GitHub, PR comments appear from the CloudEval bot.
 
+The workflow intentionally skips CloudEval review when those two secrets are not configured. This keeps forks and public demo branches green until you connect the repository to your own CloudEval project.
+
 ## Demo pull requests
 
 The public repository keeps several pull requests open as examples:
 
 | Pull request | What it demonstrates |
 | --- | --- |
-| Security hardening | Tightening network and storage controls and improving posture. |
-| Risk regression | A risky IaC change that should produce review warnings or failures. |
-| Cost optimization | SKU and capacity changes that demonstrate cost delta and savings visuals. |
+| [Security hardening](https://github.com/ganakailabs/cloudeval-azure-arm-review-example/pull/3) | Tightening network controls and improving posture. |
+| [Risk regression](https://github.com/ganakailabs/cloudeval-azure-arm-review-example/pull/1) | A risky IaC change that should produce review warnings or failures. |
+| [Cost optimization](https://github.com/ganakailabs/cloudeval-azure-arm-review-example/pull/2) | SKU and capacity changes that demonstrate cost delta and savings visuals. |
 
 These PRs are intentionally left open so docs can link to live examples.
 
