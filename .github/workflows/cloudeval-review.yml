@@ -12,11 +12,20 @@ permissions:
 jobs:
   review:
     runs-on: ubuntu-latest
+    env:
+      CLOUDEVAL_REVIEW_CONFIGURED: ${{ secrets.CLOUDEVAL_ACCESS_KEY != '' && secrets.CLOUDEVAL_PROJECT_ID != '' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Explain missing CloudEval secrets
+        if: env.CLOUDEVAL_REVIEW_CONFIGURED != 'true'
+        run: |
+          echo "CloudEval review is skipped because CLOUDEVAL_ACCESS_KEY and CLOUDEVAL_PROJECT_ID are not configured."
+          echo "Fork this repository, connect it to CloudEval, then add those repository secrets to enable PR review comments."
+
       - name: Run CloudEval review
+        if: env.CLOUDEVAL_REVIEW_CONFIGURED == 'true'
         uses: ganakailabs/cloudeval-action@v1
         with:
           access_key: ${{ secrets.CLOUDEVAL_ACCESS_KEY }}
