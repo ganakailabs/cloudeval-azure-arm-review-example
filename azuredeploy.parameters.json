@@ -14,6 +14,9 @@
     "allowedSshCidr": {
       "value": "10.0.0.0/24"
     },
+    "appIngressSource": {
+      "value": "AzureFrontDoor.Backend"
+    },
     "adminUsername": {
       "value": "azureuser"
     },

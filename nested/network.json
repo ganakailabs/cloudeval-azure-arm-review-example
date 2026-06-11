@@ -5,6 +5,7 @@
     "location": { "type": "string" },
     "workloadName": { "type": "string" },
     "allowedSshCidr": { "type": "string" },
+    "appIngressSource": { "type": "string" },
     "commonTags": { "type": "object" }
   },
   "variables": {
@@ -30,7 +31,20 @@
               "protocol": "Tcp",
               "sourcePortRange": "*",
               "destinationPortRange": "443",
-              "sourceAddressPrefix": "Internet",
+              "sourceAddressPrefix": "[parameters('appIngressSource')]",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "DenyUnexpectedInbound",
+            "properties": {
+              "priority": 4096,
+              "direction": "Inbound",
+              "access": "Deny",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*"
             }
           }
@@ -55,6 +69,19 @@
               "sourcePortRange": "*",
               "destinationPortRange": "22",
               "sourceAddressPrefix": "[parameters('allowedSshCidr')]",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "DenyUnexpectedManagementInbound",
+            "properties": {
+              "priority": 4096,
+              "direction": "Inbound",
+              "access": "Deny",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*"
             }
           }

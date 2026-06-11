@@ -18,6 +18,13 @@
       "type": "string",
       "defaultValue": "10.0.0.0/24"
     },
+    "appIngressSource": {
+      "type": "string",
+      "defaultValue": "AzureFrontDoor.Backend",
+      "metadata": {
+        "description": "Source prefix or service tag allowed to reach the application gateway."
+      }
+    },
     "adminUsername": {
       "type": "string",
       "defaultValue": "azureuser"
@@ -52,6 +59,7 @@
           "location": { "value": "[parameters('location')]" },
           "workloadName": { "value": "[parameters('workloadName')]" },
           "allowedSshCidr": { "value": "[parameters('allowedSshCidr')]" },
+          "appIngressSource": { "value": "[parameters('appIngressSource')]" },
           "commonTags": { "value": "[variables('commonTags')]" }
         }
       }
