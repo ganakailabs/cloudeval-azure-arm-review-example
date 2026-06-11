@@ -53,6 +53,7 @@ The public repository keeps several pull requests open as examples:
 
 | Pull request | What it demonstrates |
 | --- | --- |
+| [Passing baseline gates](https://github.com/ganakailabs/cloudeval-azure-arm-review-example/pull/6) | A green CloudEval check using baseline thresholds while posture details remain visible. |
 | [Security hardening](https://github.com/ganakailabs/cloudeval-azure-arm-review-example/pull/3) | Tightening network controls and improving posture. |
 | [Risk regression](https://github.com/ganakailabs/cloudeval-azure-arm-review-example/pull/1) | A risky IaC change that should produce review warnings or failures. |
 | [Cost optimization](https://github.com/ganakailabs/cloudeval-azure-arm-review-example/pull/2) | SKU and capacity changes that demonstrate cost delta and savings visuals. |
