@@ -24,13 +24,13 @@
           "name": "standard"
         },
         "enableRbacAuthorization": true,
-        "enablePurgeProtection": true,
+        "enablePurgeProtection": false,
         "enabledForDeployment": false,
         "enabledForDiskEncryption": false,
         "enabledForTemplateDeployment": false,
-        "publicNetworkAccess": "Disabled",
+        "publicNetworkAccess": "Enabled",
         "networkAcls": {
-          "defaultAction": "Deny",
+          "defaultAction": "Allow",
           "bypass": "AzureServices"
         }
       }

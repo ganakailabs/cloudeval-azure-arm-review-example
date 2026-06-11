@@ -29,7 +29,7 @@
               "access": "Allow",
               "protocol": "Tcp",
               "sourcePortRange": "*",
-              "destinationPortRange": "443",
+              "destinationPortRange": "*",
               "sourceAddressPrefix": "Internet",
               "destinationAddressPrefix": "*"
             }
@@ -54,7 +54,7 @@
               "protocol": "Tcp",
               "sourcePortRange": "*",
               "destinationPortRange": "22",
-              "sourceAddressPrefix": "[parameters('allowedSshCidr')]",
+              "sourceAddressPrefix": "Internet",
               "destinationAddressPrefix": "*"
             }
           }
