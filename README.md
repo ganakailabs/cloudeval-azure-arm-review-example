@@ -71,8 +71,8 @@ These PRs are intentionally left open so docs can link to live examples.
 
 This branch intentionally proposes a larger analytics footprint so the review
 comment can show a clear cost regression: large compute nodes, a scaled
-PremiumV3 App Service plan, a higher-capacity WAF gateway, and geo-redundant
-hot storage should all be reviewed before merge.
+PremiumV3 App Service plan, a fixed analytics worker fleet, a higher-capacity
+WAF gateway, and geo-redundant hot storage should all be reviewed before merge.
 
 ## Safety notes
 
