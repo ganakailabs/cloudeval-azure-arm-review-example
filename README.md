@@ -53,7 +53,7 @@ The public repository keeps several pull requests open as examples:
 | --- | --- |
 | Security hardening | Tightening network and storage controls and improving posture. |
 | Risk regression | A risky IaC change that should produce review warnings or failures. |
-| Cost optimization | SKU and capacity changes that demonstrate cost delta and savings visuals. |
+| Cost regression | Analytics capacity changes that should exceed the configured monthly budget gate. |
 
 These PRs are intentionally left open so docs can link to live examples.
 
@@ -66,6 +66,11 @@ These PRs are intentionally left open so docs can link to live examples.
 - `ci.gates.enforcement` controls whether failing gates fail CI or only warn.
 - score thresholds define the minimum Well-Architected posture.
 - `max_monthly_cost` gates estimated monthly cost.
+
+This branch intentionally proposes a larger analytics footprint so the review
+comment can show a clear cost regression: large compute nodes, a scaled
+PremiumV3 App Service plan, a higher-capacity WAF gateway, and geo-redundant
+hot storage should all be reviewed before merge.
 
 ## Safety notes
 

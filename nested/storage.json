@@ -18,7 +18,7 @@
       "location": "[parameters('location')]",
       "tags": "[parameters('commonTags')]",
       "sku": {
-        "name": "Standard_LRS"
+        "name": "Standard_RAGRS"
       },
       "kind": "StorageV2",
       "properties": {

@@ -38,4 +38,5 @@ ci:
     fail_on_validation_errors: true
 
     # Monthly budget gate for the estimated architecture cost.
-    max_monthly_cost: 500
+    # This branch intentionally exceeds the cap to demonstrate budget gating.
+    max_monthly_cost: 5000
