@@ -8,7 +8,7 @@ It shows how a real infrastructure repository can:
 - define the CloudEval visualization entry point in `.cloudeval/config.yaml`,
 - sync through the CloudEval GitHub App,
 - run `ganakailabs/cloudeval-action` on pull requests,
-- receive a CloudEval bot review comment with posture, validation, cost, AI summary, and report links.
+- receive a CloudEval bot review comment with posture, validation, cost, AI summary, report links, and review artifacts.
 
 ## Repository layout
 
@@ -47,6 +47,8 @@ The access key should be scoped to the CloudEval project and include project/rep
 
 The workflow intentionally skips CloudEval review when those two secrets are not configured. This keeps forks and public demo branches green until you connect the repository to your own CloudEval project.
 
+When `.cloudeval/config.yaml` enables `ci.review.outputs.pdf.enabled`, the workflow artifact includes `review/review.pdf` alongside `review/review.md` and `review/review.json`. The PR comment still keeps the CloudEval-hosted `PDF` badge, so reviewers get both a hosted download link and the exact PDF captured by the workflow run.
+
 ## Demo pull requests
 
 The public repository keeps several pull requests open as examples:
@@ -55,7 +57,7 @@ The public repository keeps several pull requests open as examples:
 | --- | --- |
 | [Security hardening](https://github.com/ganakailabs/cloudeval-azure-arm-review-example/pull/3) | Tightening network controls and improving posture. |
 | [Risk regression](https://github.com/ganakailabs/cloudeval-azure-arm-review-example/pull/1) | A risky IaC change that should produce review warnings or failures. |
-| [Cost optimization](https://github.com/ganakailabs/cloudeval-azure-arm-review-example/pull/2) | SKU and capacity changes that demonstrate cost delta and savings visuals. |
+| [Cost regression](https://github.com/ganakailabs/cloudeval-azure-arm-review-example/pull/2) | Analytics capacity changes that should exceed the configured monthly budget gate. |
 
 These PRs are intentionally left open so docs can link to live examples.
 
@@ -68,6 +70,12 @@ These PRs are intentionally left open so docs can link to live examples.
 - `ci.gates.enforcement` controls whether failing gates fail CI or only warn.
 - score thresholds define the minimum Well-Architected posture.
 - `max_monthly_cost` gates estimated monthly cost.
+- `ci.review.outputs.pdf` controls the optional PDF included in the GitHub Actions artifact bundle.
+
+This branch intentionally proposes a larger analytics footprint so the review
+comment can show a clear cost regression: large compute nodes, a scaled
+PremiumV3 App Service plan, a fixed analytics worker fleet, a higher-capacity
+WAF gateway, and geo-redundant hot storage should all be reviewed before merge.
 
 ## Safety notes
 
