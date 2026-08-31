@@ -27,6 +27,16 @@
       "metadata": {
         "description": "Public SSH key used by the VM scale set. Use a real public key before deployment."
       }
+    },
+    "sqlAdministratorLogin": {
+      "type": "string",
+      "defaultValue": "sqladminuser"
+    },
+    "sqlAdministratorPassword": {
+      "type": "secureString",
+      "metadata": {
+        "description": "SQL administrator password. Use Key Vault or CI secrets before deployment."
+      }
     }
   },
   "variables": {
@@ -113,8 +123,28 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
+      "name": "database",
+      "dependsOn": [ "network", "storage", "monitoring" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "nested/database.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": { "value": "[parameters('location')]" },
+          "workloadName": { "value": "[parameters('workloadName')]" },
+          "administratorLogin": { "value": "[parameters('sqlAdministratorLogin')]" },
+          "administratorLoginPassword": { "value": "[parameters('sqlAdministratorPassword')]" },
+          "commonTags": { "value": "[variables('commonTags')]" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
       "name": "compute",
-      "dependsOn": [ "network", "storage", "keyvault", "monitoring" ],
+      "dependsOn": [ "network", "storage", "keyvault", "monitoring", "database" ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {

@@ -20,6 +20,7 @@ It shows how a real infrastructure repository can:
 ├── azuredeploy.parameters.json
 └── nested/
     ├── compute.json
+    ├── database.json
     ├── keyvault.json
     ├── monitoring.json
     ├── network.json
@@ -58,6 +59,10 @@ The public repository keeps several pull requests open as examples:
 | [Cost optimization](https://github.com/ganakailabs/cloudeval-azure-arm-review-example/pull/2) | SKU and capacity changes that demonstrate cost delta and savings visuals. |
 
 These PRs are intentionally left open so docs can link to live examples.
+
+## Native GitHub review demo
+
+The PR named **Demo: database tier review with CloudEval** adds a nested SQL Database template and intentionally leaves reviewable issues such as public network access, TLS 1.0, and a higher-cost database SKU. Use it to inspect the GitHub pull-request comment, AI summary, cost drilldowns, validation details, workflow artifacts, and CloudEval project links from a real review run.
 
 ## Config gates
 
