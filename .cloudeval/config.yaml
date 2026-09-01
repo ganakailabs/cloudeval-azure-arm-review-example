@@ -1,5 +1,5 @@
-# CloudEval project configuration for this repository.
-# Keep this file in source control so CloudEval and CI use the same entry point and gates.
+# Cloudeval project configuration for this repository.
+# Keep this file in source control so Cloudeval and CI use the same entry point and gates.
 
 version: 1
 
@@ -21,7 +21,7 @@ ci:
     # warn: report failures in the PR comment but do not fail CI.
     enforcement: required
 
-    # Overall Well-Architected posture. CloudEval scores range from 0 to 100.
+    # Overall Well-Architected posture. Cloudeval scores range from 0 to 100.
     overall_score_min: 60
 
     # Optional per-pillar minimums. Omitted pillars use pillar_score_min.
