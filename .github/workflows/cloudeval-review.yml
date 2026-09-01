@@ -6,17 +6,22 @@ on:
 
 permissions:
   contents: read
+  checks: write
   pull-requests: write
   issues: write
+  security-events: write
 
 jobs:
   review:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       CLOUDEVAL_REVIEW_CONFIGURED: ${{ secrets.CLOUDEVAL_ACCESS_KEY != '' && secrets.CLOUDEVAL_PROJECT_ID != '' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Explain missing CloudEval secrets
         if: env.CLOUDEVAL_REVIEW_CONFIGURED != 'true'
@@ -25,6 +30,7 @@ jobs:
           echo "Fork this repository, connect it to CloudEval, then add those repository secrets to enable PR review comments."
 
       - name: Run CloudEval review
+        id: cloudeval
         if: env.CLOUDEVAL_REVIEW_CONFIGURED == 'true'
         uses: ganakailabs/cloudeval-action@v1
         with:
@@ -35,6 +41,17 @@ jobs:
           ref: ${{ github.head_ref || github.ref_name }}
           commit_sha: ${{ github.event.pull_request.head.sha || github.sha }}
           ai_summary: "true"
+          github_checks: "true"
+          pr_line_comments: "true"
+          sarif: "true"
           post_pr_comment: "true"
           upload_artifacts: "true"
           include_run_metadata: "true"
+          review_wait_timeout_ms: "900000"
+          review_poll_interval_ms: "5000"
+
+      - name: Upload CloudEval SARIF
+        if: always() && steps.cloudeval.outputs.sarif_path != ''
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ steps.cloudeval.outputs.sarif_path }}
