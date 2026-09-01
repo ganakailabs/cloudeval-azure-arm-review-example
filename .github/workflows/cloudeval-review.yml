@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Explain missing CloudEval secrets
         if: env.CLOUDEVAL_REVIEW_CONFIGURED != 'true'
@@ -40,6 +42,7 @@ jobs:
           commit_sha: ${{ github.event.pull_request.head.sha || github.sha }}
           ai_summary: "true"
           github_checks: "true"
+          pr_line_comments: "true"
           sarif: "true"
           post_pr_comment: "true"
           upload_artifacts: "true"
