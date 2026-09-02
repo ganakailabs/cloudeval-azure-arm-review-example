@@ -25,7 +25,7 @@
         "accessTier": "Hot",
         "allowBlobPublicAccess": true,
         "allowSharedKeyAccess": false,
-        "minimumTlsVersion": "TLS1_2",
+        "minimumTlsVersion": "TLS1_0",
         "supportsHttpsTrafficOnly": false,
         "networkAcls": {
           "defaultAction": "Deny",
