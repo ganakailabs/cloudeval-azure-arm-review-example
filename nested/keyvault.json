@@ -28,7 +28,7 @@
         "enabledForDeployment": false,
         "enabledForDiskEncryption": false,
         "enabledForTemplateDeployment": false,
-        "publicNetworkAccess": "Disabled",
+        "publicNetworkAccess": "Enabled",
         "networkAcls": {
           "defaultAction": "Deny",
           "bypass": "AzureServices"
