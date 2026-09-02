@@ -1,0 +1,65 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": { "type": "string" },
+    "workloadName": { "type": "string" },
+    "administratorLogin": { "type": "string" },
+    "administratorLoginPassword": { "type": "secureString" },
+    "commonTags": { "type": "object" }
+  },
+  "variables": {
+    "suffix": "[uniqueString(resourceGroup().id, parameters('workloadName'), 'sql')]",
+    "serverName": "[toLower(concat(parameters('workloadName'), '-sql-', variables('suffix')))]",
+    "databaseName": "[concat(parameters('workloadName'), '-orders')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Sql/servers",
+      "apiVersion": "2023-08-01-preview",
+      "name": "[variables('serverName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('commonTags')]",
+      "properties": {
+        "administratorLogin": "[parameters('administratorLogin')]",
+        "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+        "minimalTlsVersion": "1.0",
+        "publicNetworkAccess": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.Sql/servers/firewallRules",
+      "apiVersion": "2023-08-01-preview",
+      "name": "[concat(variables('serverName'), '/AllowAllAzureServices')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', variables('serverName'))]"
+      ],
+      "properties": {
+        "startIpAddress": "0.0.0.0",
+        "endIpAddress": "0.0.0.0"
+      }
+    },
+    {
+      "type": "Microsoft.Sql/servers/databases",
+      "apiVersion": "2023-08-01-preview",
+      "name": "[concat(variables('serverName'), '/', variables('databaseName'))]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('commonTags')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Sql/servers', variables('serverName'))]"
+      ],
+      "sku": {
+        "name": "GP_Gen5",
+        "tier": "GeneralPurpose",
+        "family": "Gen5",
+        "capacity": 4
+      },
+      "properties": {
+        "collation": "SQL_Latin1_General_CP1_CI_AS",
+        "maxSizeBytes": 34359738368,
+        "zoneRedundant": false,
+        "readScale": "Disabled"
+      }
+    }
+  ]
+}

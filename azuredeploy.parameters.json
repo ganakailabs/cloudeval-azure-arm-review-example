@@ -19,6 +19,12 @@
     },
     "adminPublicKey": {
       "value": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDexamplePublicKeyOnlyForReviewDoNotDeploy"
+    },
+    "sqlAdministratorLogin": {
+      "value": "sqladminuser"
+    },
+    "sqlAdministratorPassword": {
+      "value": "REPLACE_WITH_KEY_VAULT_OR_CI_SECRET"
     }
   }
 }

@@ -23,10 +23,10 @@
       "kind": "StorageV2",
       "properties": {
         "accessTier": "Hot",
-        "allowBlobPublicAccess": false,
+        "allowBlobPublicAccess": true,
         "allowSharedKeyAccess": false,
-        "minimumTlsVersion": "TLS1_2",
-        "supportsHttpsTrafficOnly": true,
+        "minimumTlsVersion": "TLS1_0",
+        "supportsHttpsTrafficOnly": false,
         "networkAcls": {
           "defaultAction": "Deny",
           "bypass": "AzureServices"
