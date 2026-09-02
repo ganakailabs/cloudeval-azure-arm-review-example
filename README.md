@@ -64,6 +64,8 @@ These PRs are intentionally left open so docs can link to live examples.
 
 The PR named **Demo: database tier review with CloudEval** adds a nested SQL Database template and intentionally leaves reviewable issues such as public network access, TLS 1.0, and a higher-cost database SKU. Use it to inspect the GitHub pull-request comment, AI summary, cost drilldowns, validation details, workflow artifacts, and CloudEval project links from a real review run.
 
+Last refreshed for review demonstration: 2026-09-02T01:52:21Z.
+
 ## Config gates
 
 `.cloudeval/config.yaml` sets the review contract:
